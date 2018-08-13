@@ -39,3 +39,6 @@ jspm_packages
 dist
 test.js
 test.ts
+
+src/operationalResponseParser.js
+src/queryResponseParser.js

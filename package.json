@@ -5,8 +5,9 @@
   "main": "./dist/app.js",
   "types": "./dist/app.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "./node_modules/.bin/pegjs src/operationalResponseParser.pegjs && ./node_modules/.bin/pegjs src/queryResponseParser.pegjs",
     "build": "rm -rf ./dist && tslint --project . && tsc",
+    "postbuild": "./node_modules/.bin/pegjs -o dist/operationalResponseParser.js src/operationalResponseParser.pegjs && ./node_modules/.bin/pegjs -o dist/queryResponseParser.js src/queryResponseParser.pegjs",
     "prepublishOnly": "rm -rf ./dist && tslint --project . && tsc"
   },
   "repository": {
@@ -25,7 +26,8 @@
   },
   "homepage": "https://github.com/felipebergamin/node-tl1-fiberhome#readme",
   "devDependencies": {
-    "@types/node": "^8.5.2"
+    "@types/node": "^8.5.2",
+    "pegjs": "^0.10.0"
   },
   "dependencies": {
     "@types/debug": "0.0.30",
