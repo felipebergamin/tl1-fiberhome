@@ -4,5 +4,5 @@ export enum CONNECTION {
   CONNECTED,
   CLOSING,
   CLOSED,
-  ERROR
-};
+  ERROR,
+}

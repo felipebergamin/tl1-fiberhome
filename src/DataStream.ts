@@ -33,7 +33,7 @@ export default class DataStream {
   }
 
   /**
-   * 
+   *
    * @param socketConfs host and port to connect
    * @param timeout timeout config (in ms)
    */
