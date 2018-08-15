@@ -40,5 +40,4 @@ dist
 test.js
 test.ts
 
-src/operationalResponseParser.js
-src/queryResponseParser.js
+src/parser.js

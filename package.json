@@ -5,9 +5,9 @@
   "main": "./dist/app.js",
   "types": "./dist/app.d.ts",
   "scripts": {
-    "prepare": "./node_modules/.bin/pegjs src/operationalResponseParser.pegjs && ./node_modules/.bin/pegjs src/queryResponseParser.pegjs",
+    "prepare": "./node_modules/.bin/pegjs src/parser.pegjs",
     "build": "rm -rf ./dist && tslint --project . && tsc",
-    "postbuild": "./node_modules/.bin/pegjs -o dist/operationalResponseParser.js src/operationalResponseParser.pegjs && ./node_modules/.bin/pegjs -o dist/queryResponseParser.js src/queryResponseParser.pegjs",
+    "postbuild": "./node_modules/.bin/pegjs -o dist/parser.js src/parser.pegjs",
     "prepublishOnly": "rm -rf ./dist && tslint --project . && tsc"
   },
   "repository": {
