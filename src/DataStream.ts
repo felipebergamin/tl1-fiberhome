@@ -1,10 +1,13 @@
 import { Socket, isIP } from 'net';
 import { Subject, Observable, fromEvent } from 'rxjs';
 import { scan } from 'rxjs/operators';
+import * as Debug from 'debug';
 
 import { CONNECTION } from './constants';
 import debug from './debug';
 import * as parser from './parser';
+
+const parserDebug = Debug('node-tl1-fiberhome:parser');
 
 /** handles socket operations */
 export default class DataStream {
@@ -77,16 +80,16 @@ export default class DataStream {
           /* parse responses with one or more sentences */
           this.rawData$.pipe(
             scan((last, curr) => {
-              debug('Last Buffer', last.toString());
-              debug('Current Buffer', curr.toString());
+              parserDebug('Last Buffer', last.toString());
+              parserDebug('Current Buffer', curr.toString());
               let dataBuffer = Buffer.concat([last, curr]);
               const indexOnBuffer = 0;
               let endOfSentence = 0;
-              debug('Data on Buffer (%d bytes):', dataBuffer.length, dataBuffer.toString());
+              parserDebug('Data on Buffer (%d bytes):', dataBuffer.length, dataBuffer.toString());
 
               while (dataBuffer.length > 0) {
                 endOfSentence = dataBuffer.toString().search(/(;|>)/);
-                debug('Terminator of Next Sentence: %d \t Buffer Length %d',
+                parserDebug('Terminator of Next Sentence: %d \t Buffer Length %d',
                   endOfSentence, dataBuffer.length);
 
                 if (endOfSentence === -1) { break; }
@@ -95,9 +98,9 @@ export default class DataStream {
                 this.data$.next(parser.parse(sentence.toString().replace(/-{5,}/g, '@'.repeat(40))));
                 // indexOnBuffer = endOfSentence + 1;
 
-                debug('Reached End of Sentence on index %d: ', endOfSentence, sentence.toString());
+                parserDebug('Reached End of Sentence on index %d: ', endOfSentence, sentence.toString());
                 dataBuffer = dataBuffer.slice(endOfSentence + 1, dataBuffer.length);
-                debug('Remaining %d bytes on buffer', dataBuffer.length);
+                parserDebug('Remaining %d bytes on buffer', dataBuffer.length);
                 // this.data$.next(parser.parse(sentence.toString().replace(/-{5,}/g, '@'.repeat(40))));
               }
 
