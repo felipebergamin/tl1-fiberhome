@@ -11,8 +11,8 @@
 start = commandResponse
 
 commandResponse
-  = operationCommand:operationCommand { return { operationCommand } }
-  / queryCommand:queryCommand { return { queryCommand } }
+  = operationCommand:operationCommand { return { type: "operationCommand", ...operationCommand } }
+  / queryCommand:queryCommand { return { type: "queryCommand", ...queryCommand } }
   
 
 operationCommand
