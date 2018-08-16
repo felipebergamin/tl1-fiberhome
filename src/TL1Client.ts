@@ -45,6 +45,12 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag.toString()).read;
   }
 
+  handshake(ctag = Date.now()) {
+    const sentence = `SHAKEHAND:::${ctag}::;`;
+
+    return this.runTaggedCommand(sentence, this.dataStream, ctag.toString()).read;
+  }
+
   disconnect() {
     this.dataStream.closeSocket();
   }
