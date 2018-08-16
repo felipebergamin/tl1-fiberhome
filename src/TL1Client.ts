@@ -3,6 +3,7 @@ import DataStream from './DataStream';
 import { TaggedCommand } from './TaggedCommand';
 import { processParams } from './utils';
 import { IListUnregOnuParams } from './interfaces/IListUnregOnuParams';
+import { IAddOnuParams } from './interfaces/IAddOnuParams';
 
 export class TL1Client {
   /** socket */
@@ -56,6 +57,21 @@ export class TL1Client {
     const acceptParams = ['OLTID', 'PONID'];
     const targetIdentifier = processParams(acceptParams, params);
     const sentence = `LST-UNREGONU::${targetIdentifier}:${ctag}::;`;
+
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
+  public addOnu(params: IAddOnuParams, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [
+      "OLTID", "PONID",
+    ];
+    const datablocksAcceptParams = [
+      "AUTHTYPE", "ONUID", "PWD", "ONUNO", "NAME", "DESC", "ONUTYPE",
+    ];
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const datablocks = processParams(datablocksAcceptParams, params);
+
+    const sentence = `ADD-ONU::${targetIdentifier}:${ctag}::${datablocks};`;
 
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
