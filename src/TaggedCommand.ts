@@ -1,5 +1,5 @@
 import { ReplaySubject, of } from 'rxjs';
-import { filter, takeWhile, concatMap, reduce } from 'rxjs/operators';
+import { filter, takeWhile, concatMap, reduce, timeout } from 'rxjs/operators';
 
 import DataStream from './DataStream';
 import debug from './debug';
@@ -12,7 +12,7 @@ export class TaggedCommand {
    * @param dataStream data stream reference
    * @param ctag command tag
    */
-  constructor(private dataStream: DataStream, public ctag: string) { }
+  constructor(private dataStream: DataStream, public ctag: string, private responseTimeout) { }
 
   write(sentence: string) {
     this.dataStream.write(sentence);
@@ -30,6 +30,7 @@ export class TaggedCommand {
         currentValue.values.unshift(acc.values);
         return currentValue;
       }),
+      timeout(this.responseTimeout),
     ).subscribe(res => {
       this.data$.next(res);
       this.data$.complete();

@@ -12,10 +12,9 @@ export class TL1Client {
    * @param server tl1 server address
    * @param port tl1 port to connect (default 3337)
    */
-  constructor(private server: string, private port: number = 3337, private timeout = 4000) {
+  constructor(private server: string, private port: number = 3337, private timeout = 5000) {
     debug('TL1Client.new', server, port);
     this.dataStream = new DataStream();
-    this.dataStream.setTimeout(this.timeout);
   }
 
   connect() {
@@ -51,7 +50,7 @@ export class TL1Client {
   }
 
   private runTaggedCommand(tl1Command: string, dataStream: DataStream, ctag: string): TaggedCommand {
-    const exec = new TaggedCommand(dataStream, ctag);
+    const exec = new TaggedCommand(dataStream, ctag, this.timeout);
     exec.write(tl1Command);
 
     return exec;

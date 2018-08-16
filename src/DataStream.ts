@@ -18,15 +18,16 @@ export default class DataStream {
   /** flag indicating the connection state */
   private state = CONNECTION.CLOSED;
 
+  /** emit parsed data */
   private data$: Subject<any>;
 
+  /** emit raw data (Buffer) received on Socket */
   private rawData$: Observable<Buffer>;
 
-  constructor(timeout = 5000) {
+  constructor() {
     debug('new DataStream');
 
     this.socket = new Socket();
-    this.setTimeout(timeout);
     this.rawData$ = new Observable();
     this.data$ = new Subject();
 
@@ -39,11 +40,6 @@ export default class DataStream {
     this.socket.on('error', (err) => {
       debug('DataStream Socket Error');
       this.data$.error(err);
-    });
-
-    this.socket.on('timeout', (/* timeoutError */) => {
-      // this.data$.error(`Timeout error: ${JSON.stringify(timeoutError)}`);
-      debug(`DataStream timeout error`);
     });
   }
 
@@ -140,18 +136,14 @@ export default class DataStream {
 
   closeSocket(err?) {
     debug('Closing socket');
+    this.endObservables();
     err ? this.socket.destroy(err) : this.socket.end();
-  }
-
-  setTimeout(t: number) {
-    debug('Set tocket timeout', t);
-    this.socket.setTimeout(t);
   }
 
   write(tl1Sentence: string) {
     if (this.state !== CONNECTION.CONNECTED) {
       debug(`Socket not connected`);
-      return;
+      throw new Error(`Can't write: Socket is closed`);
     }
     debug(`Writing ${tl1Sentence}`);
 
