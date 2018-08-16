@@ -2,6 +2,7 @@ import debug from './debug';
 import DataStream from './DataStream';
 import { TaggedCommand } from './TaggedCommand';
 import { processParams } from './utils';
+import { IListUnregOnuParams } from './interfaces/IListUnregOnuParams';
 
 export class TL1Client {
   /** socket */
@@ -49,6 +50,14 @@ export class TL1Client {
     const sentence = `SHAKEHAND:::${ctag}::;`;
 
     return this.runTaggedCommand(sentence, this.dataStream, ctag.toString()).read;
+  }
+
+  listUnregisteredONUs(params: IListUnregOnuParams, ctag = Date.now().toString()) {
+    const acceptParams = ['OLTID', 'PONID'];
+    const targetIdentifier = processParams(acceptParams, params);
+    const sentence = `LST-UNREGONU::${targetIdentifier}:${ctag}::;`;
+
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
   disconnect() {
