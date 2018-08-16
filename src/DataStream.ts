@@ -22,10 +22,11 @@ export default class DataStream {
 
   private rawData$: Observable<Buffer>;
 
-  constructor() {
+  constructor(timeout = 5000) {
     debug('new DataStream');
 
     this.socket = new Socket();
+    this.setTimeout(timeout);
     this.rawData$ = new Observable();
     this.data$ = new Subject();
 
@@ -40,8 +41,8 @@ export default class DataStream {
       this.data$.error(err);
     });
 
-    this.socket.on('timeout', (timeoutError) => {
-      this.data$.error(`Timeout error: ${JSON.stringify(timeoutError)}`);
+    this.socket.on('timeout', (/* timeoutError */) => {
+      // this.data$.error(`Timeout error: ${JSON.stringify(timeoutError)}`);
       debug(`DataStream timeout error`);
     });
   }
@@ -59,7 +60,7 @@ export default class DataStream {
    * @param socketConfs host and port to connect
    * @param timeout timeout config (in ms)
    */
-  connect(socketConfs: { host: string, port: number }, timeout = 5000) {
+  connect(socketConfs: { host: string, port: number }) {
     debug(`DataStream:Connecting socket %s`, JSON.stringify(socketConfs));
     this.state = CONNECTION.CONNECTING;
 
@@ -77,7 +78,11 @@ export default class DataStream {
             this.data$.next(parser.parse(rawData.toString().replace(/-{5,}/g, '@'.repeat(40))));
           }); */
 
-          /* parse responses with one or more sentences */
+          /**
+           * parse responses with one or more sentences
+           * - inspired by trakkasure/mikronode code
+           * thank you :D
+           */
           this.rawData$.pipe(
             scan((last, curr) => {
               parserDebug('Last Buffer', last.toString());
@@ -116,7 +121,6 @@ export default class DataStream {
             this.data$.next(parser.parse(strdata.replace(/-{5,}/g, '@'.repeat(40))));
           }); */
           this.state = CONNECTION.CONNECTED;
-          this.setTimeout(timeout);
 
           return resolve(connectionArgs);
         });
