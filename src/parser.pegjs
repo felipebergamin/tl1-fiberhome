@@ -66,10 +66,13 @@ result
   [@]+ crlf { return { title: title.join(""), attribs, values: splitArray(values, attribs.length)} }
 
 attribs
-  = (_ attrib:[a-zA-Z]+ { return attrib.join(""); } )*
+  = (tab attrib:[a-zA-Z ]+ { return attrib.join(""); } )*
 
 values
-  = (_ v:[a-zA-Z0-9-.]+ crlf { return v.join("") } )*
+  = (tab v:[:a-zA-Z0-9-. ]+ crlf { return v.join("") } )*
+
+tab
+  = [\t]*
 
 _ "whitespace"
   = [ \t]* { return '' }
