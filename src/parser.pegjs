@@ -48,7 +48,7 @@ response
   = response_block / quotedLine
 
 response_block
-  = crlf _ "EN=" error_code:[0a-zA-Z]+ _ "ENDESC=" error_description:[a-zA-Z =]+ { return {error_code: error_code.join(""), error_description: error_description.join("")} }
+  = crlf _ "EN=" error_code:[0a-zA-Z]+ _ "ENDESC=" error_description:[0-9a-zA-Z =':]+ { return {error_code: error_code.join(""), error_description: error_description.join("")} }
 
 quotedLine
   = crlf _ "total_blocks=" total_blocks:[0-9]+
