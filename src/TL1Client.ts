@@ -13,6 +13,7 @@ import { IQueryOnuState } from './interfaces/IQueryOnuState';
 import { IOnuPingParams } from './interfaces/IOnuPingParams';
 import { IQueryNeInformationParams } from './interfaces/IQueryNeInformationParams';
 import { IQueryCardInformationParams } from './interfaces/IQueryCardInformationParams';
+import { IQueryPonInfoParams } from './interfaces/IQueryPonInfoParams';
 
 export class TL1Client {
   /** socket */
@@ -195,6 +196,16 @@ export class TL1Client {
     ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-BRDINFO::${targetIdentifier}:${ctag}::;`;
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
+  queryPonInfo(params: IQueryPonInfoParams, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [
+      'OLTID', 'PONID',
+    ];
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const sentence = `LST-PONINFO::${targetIdentifier}:${ctag}::;`;
+
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
