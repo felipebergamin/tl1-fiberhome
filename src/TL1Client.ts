@@ -8,6 +8,7 @@ import { IConfigureLanPort } from './interfaces/IConfigureLanPort';
 import { IConfigureLanPortBW } from './interfaces/IConfigureLanPortBW';
 import { IDelLanPortVlan } from './interfaces/IDelLanPortVlan';
 import { IDelOnuParams } from './interfaces/IDelOnuParams';
+import { IConfigureWanParams } from './interfaces/IConfigureWanParams';
 
 export class TL1Client {
   /** socket */
@@ -133,6 +134,22 @@ export class TL1Client {
     const datablocks = processParams(datablocksAcceptParams, params);
 
     const sentence = `CFG-ONUBW::${targetIdentifier}:${ctag}::${datablocks};`;
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
+  configureWanConnection(params: IConfigureWanParams, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [
+      "ONUIP", "OLTID", "PONID", "ONUIDTYPE", "ONUID",
+    ];
+    const datablocksAcceptParams = [
+      "STATUS", "MODE", "CONNTYPE", "VLAN", "COS", "QOS", "NAT", "IPMODE", "WANIP",
+      "WANMASK", "WANGATEWAY", "MASTERDNS", "SLAVEDNS", "PPPOEPROXY", "PPPOEUSER",
+      "PPPOEPASSWD", "PPPOENAME", "PPPOEMODE", "UPORT", "SSID", "WANSVC",
+      "UPPROFILENAME", "DOWNPROFILENAME",
+    ];
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const datablocks = processParams(datablocksAcceptParams, params);
+    const sentence = `SET-WANSERVICE::${targetIdentifier}:${ctag}::${datablocks};`;
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
