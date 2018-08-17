@@ -14,6 +14,7 @@ import { IOnuPingParams } from './interfaces/IOnuPingParams';
 import { IQueryNeInformationParams } from './interfaces/IQueryNeInformationParams';
 import { IQueryCardInformationParams } from './interfaces/IQueryCardInformationParams';
 import { IQueryPonInfoParams } from './interfaces/IQueryPonInfoParams';
+import { IResetOnuParams } from './interfaces/IResetOnuParams';
 
 export class TL1Client {
   /** socket */
@@ -205,6 +206,18 @@ export class TL1Client {
     ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-PONINFO::${targetIdentifier}:${ctag}::;`;
+
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
+  resetOnu(params: IResetOnuParams, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [
+      'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID',
+    ];
+    const datablocksAcceptParams = [ 'RESETTYPE' ];
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const datablocks = processParams(datablocksAcceptParams, params);
+    const sentence = `RESET-ONU::${targetIdentifier}:${ctag}::${datablocks};`;
 
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
