@@ -7,6 +7,7 @@ import { IAddOnuParams } from './interfaces/IAddOnuParams';
 import { IConfigureLanPort } from './interfaces/IConfigureLanPort';
 import { IConfigureLanPortBW } from './interfaces/IConfigureLanPortBW';
 import { IDelLanPortVlan } from './interfaces/IDelLanPortVlan';
+import { IDelOnuParams } from './interfaces/IDelOnuParams';
 
 export class TL1Client {
   /** socket */
@@ -76,6 +77,22 @@ export class TL1Client {
 
     const sentence = `ADD-ONU::${targetIdentifier}:${ctag}::${datablocks};`;
 
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
+  /**
+   * delete an authorized ONU from system
+   */
+  deleteOnu(params: IDelOnuParams, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [
+      'OLTID', 'PONID',
+    ];
+    const datablocksAcceptParams = [
+      'ONUIDTYPE', 'ONUID',
+    ];
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const datablocks = processParams(datablocksAcceptParams, params);
+    const sentence = `DEL-ONU::${targetIdentifier}:${ctag}::${datablocks};`;
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
