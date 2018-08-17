@@ -78,7 +78,7 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
-  public configureLanPort(params: IConfigureLanPort, ctag = Date.now().toString()) {
+  public configureLanPortVlan(params: IConfigureLanPort, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       "ONUIP", "OLTID", "PONID", "ONUIDTYPE", "ONUID", "ONUPORT",
     ];
