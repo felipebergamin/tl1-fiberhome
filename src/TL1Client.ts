@@ -9,6 +9,7 @@ import { IConfigureLanPortBW } from './interfaces/IConfigureLanPortBW';
 import { IDelLanPortVlan } from './interfaces/IDelLanPortVlan';
 import { IDelOnuParams } from './interfaces/IDelOnuParams';
 import { IConfigureWanParams } from './interfaces/IConfigureWanParams';
+import { IQueryOnuState } from './interfaces/IQueryOnuState';
 
 export class TL1Client {
   /** socket */
@@ -150,6 +151,15 @@ export class TL1Client {
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const datablocks = processParams(datablocksAcceptParams, params);
     const sentence = `SET-WANSERVICE::${targetIdentifier}:${ctag}::${datablocks};`;
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
+  queryOnuState(params: IQueryOnuState, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [
+      'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID',
+    ];
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const sentence = `LST-ONUSTATE::${targetIdentifier}:${ctag}::;`;
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
