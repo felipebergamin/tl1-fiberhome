@@ -16,6 +16,7 @@ import { IQueryCardInformationParams } from './interfaces/IQueryCardInformationP
 import { IQueryPonInfoParams } from './interfaces/IQueryPonInfoParams';
 import { IResetOnuParams } from './interfaces/IResetOnuParams';
 import { IListONUParams } from './interfaces/IListONUParams';
+import { IListOnuLanInfoParams } from './interfaces/IListOnuLanInfoParams';
 
 export class TL1Client {
   /** socket */
@@ -34,7 +35,7 @@ export class TL1Client {
   connect() {
     debug('TL1Client:Connecting on Socket %s:%d', this.server, this.port);
 
-    return this.dataStream.connect({host: this.server, port: this.port});
+    return this.dataStream.connect({ host: this.server, port: this.port });
   }
 
   login(login: string, pwd: string, ctag = Date.now()) {
@@ -173,7 +174,7 @@ export class TL1Client {
     const targetIdAcceptParams = [
       'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID',
     ];
-    const datablocksAcceptParams = [ 'IP' ];
+    const datablocksAcceptParams = ['IP'];
 
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const datablocks = processParams(datablocksAcceptParams, params);
@@ -215,7 +216,7 @@ export class TL1Client {
     const targetIdAcceptParams = [
       'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID', 'PORTID',
     ];
-    const datablocksAcceptParams = [ 'RESETTYPE' ];
+    const datablocksAcceptParams = ['RESETTYPE'];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const datablocks = processParams(datablocksAcceptParams, params);
     const sentence = `RESET-ONU::${targetIdentifier}:${ctag}::${datablocks};`;
@@ -224,7 +225,7 @@ export class TL1Client {
   }
 
   queryOltInformation(params: { OLTID: string }, ctag = Date.now().toString()) {
-    const targetIdAcceptParams = [ 'OLTID' ];
+    const targetIdAcceptParams = ['OLTID'];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-DEVICE::${targetIdentifier}:${ctag}::;`;
 
@@ -237,6 +238,16 @@ export class TL1Client {
     ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-ONU::${targetIdentifier}:${ctag}::;`;
+
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
+  listOnuLanInfo(params: IListOnuLanInfoParams, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [
+      'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID', 'ONUPORT',
+    ];
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const sentence = `LST-ONULANINFO::${targetIdentifier}:${ctag}::;`;
 
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
