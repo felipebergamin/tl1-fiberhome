@@ -56,7 +56,7 @@ quotedLine
   crlf _ "block_records=" block_records:[0-9]+ result:result { return { total_blocks: +total_blocks.join(""), block_number: +block_number.join(""), block_records: +block_records.join(""), result } }
 
 terminator "terminator"
-  = crlf terminator:[;|] { return {terminator} }
+  = crlf _ terminator:[;|>] { return {terminator} }
 
 result
   = crlf title:[_\-a-zA-Z0-9 ]* crlf
@@ -69,7 +69,7 @@ attribs
   = (tab attrib:[a-zA-Z ]+ { return attrib.join(""); } )*
 
 values
-  = (tab v:[_:a-zA-Z0-9-. ]+ crlf { return v.join("") } )*
+  = (tab v:[_:a-zA-Z0-9-.\[\] ]+ crlf { return v.join("") } )*
 
 tab
   = [\t]*
