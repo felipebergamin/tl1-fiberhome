@@ -96,7 +96,13 @@ export default class DataStream {
                 if (endOfSentence === -1) { break; }
 
                 const sentence = dataBuffer.slice(indexOnBuffer, endOfSentence + 1);
-                this.data$.next(parser.parse(sentence.toString().replace(/-{5,}/g, '@'.repeat(40))));
+                const packet = sentence.toString().replace(/-{5,}/g, '@'.repeat(40));
+
+                try {
+                  this.data$.next(parser.parse(packet.trim()));
+                } catch (err) {
+                  parserDebug('Error: ', JSON.stringify(err));
+                }
                 // indexOnBuffer = endOfSentence + 1;
 
                 parserDebug('Reached End of Sentence on index %d: ', endOfSentence, sentence.toString());
