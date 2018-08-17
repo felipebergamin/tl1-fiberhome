@@ -12,6 +12,7 @@ import { IConfigureWanParams } from './interfaces/IConfigureWanParams';
 import { IQueryOnuState } from './interfaces/IQueryOnuState';
 import { IOnuPingParams } from './interfaces/IOnuPingParams';
 import { IQueryNeInformationParams } from './interfaces/IQueryNeInformationParams';
+import { IQueryCardInformationParams } from './interfaces/IQueryCardInformationParams';
 
 export class TL1Client {
   /** socket */
@@ -185,6 +186,15 @@ export class TL1Client {
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-DEVINFO::${targetIdentifier}:${ctag}::;`;
 
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
+  queryCardInformation(params: IQueryCardInformationParams, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [
+      'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID', 'BOARDID',
+    ];
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const sentence = `LST-BRDINFO::${targetIdentifier}:${ctag}::;`;
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
