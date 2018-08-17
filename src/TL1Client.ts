@@ -213,7 +213,7 @@ export class TL1Client {
 
   resetOnu(params: IResetOnuParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
-      'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID',
+      'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID', 'PORTID',
     ];
     const datablocksAcceptParams = [ 'RESETTYPE' ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
