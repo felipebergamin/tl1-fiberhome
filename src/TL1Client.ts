@@ -5,6 +5,7 @@ import { processParams } from './utils';
 import { IListUnregOnuParams } from './interfaces/IListUnregOnuParams';
 import { IAddOnuParams } from './interfaces/IAddOnuParams';
 import { IConfigureLanPort } from './interfaces/IConfigureLanPort';
+import { IConfigureLanPortBW } from './interfaces/IConfigureLanPortBW';
 
 export class TL1Client {
   /** socket */
@@ -89,6 +90,21 @@ export class TL1Client {
     const datablocks = processParams(datablocksAcceptParams, params);
 
     const sentence = `CFG-LANPORTVLAN::${targetIdentifier}:${ctag}::${datablocks};`;
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
+  configureLanPortBandwidth(params: IConfigureLanPortBW, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [
+      "ONUIP", "OLTID", "PONID", "ONUIDTYPE", "ONUID", "ONUPORT",
+    ];
+    const datablocksAcceptParams = [
+      "UPBW", "DOWNBW",
+    ];
+
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const datablocks = processParams(datablocksAcceptParams, params);
+
+    const sentence = `CFG-ONUBW::${targetIdentifier}:${ctag}::${datablocks};`;
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
