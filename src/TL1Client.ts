@@ -222,6 +222,14 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
+  queryOltInformation(params: { OLTID: string }, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [ 'OLTID' ];
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const sentence = `LST-DEVICE::${targetIdentifier}:${ctag}::;`;
+
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
   disconnect() {
     this.dataStream.closeSocket();
   }
