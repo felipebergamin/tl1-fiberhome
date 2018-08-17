@@ -121,7 +121,7 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
-  configureLanPortBandwidth(params: IConfigureLanPortBW, ctag = Date.now().toString()) {
+  configureONUBandwidth(params: IConfigureLanPortBW, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       "ONUIP", "OLTID", "PONID", "ONUIDTYPE", "ONUID", "ONUPORT",
     ];
