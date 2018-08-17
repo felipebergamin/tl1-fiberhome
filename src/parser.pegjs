@@ -59,7 +59,7 @@ terminator "terminator"
   = crlf terminator:[;|] { return {terminator} }
 
 result
-  = crlf title:[_\-a-zA-Z0-9 ]+ crlf
+  = crlf title:[_\-a-zA-Z0-9 ]* crlf
   [@]+ crlf
   attribs:attribs crlf
   values:values
