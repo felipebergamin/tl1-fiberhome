@@ -15,6 +15,7 @@ import { IQueryNeInformationParams } from './interfaces/IQueryNeInformationParam
 import { IQueryCardInformationParams } from './interfaces/IQueryCardInformationParams';
 import { IQueryPonInfoParams } from './interfaces/IQueryPonInfoParams';
 import { IResetOnuParams } from './interfaces/IResetOnuParams';
+import { IListONUParams } from './interfaces/IListONUParams';
 
 export class TL1Client {
   /** socket */
@@ -226,6 +227,16 @@ export class TL1Client {
     const targetIdAcceptParams = [ 'OLTID' ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-DEVICE::${targetIdentifier}:${ctag}::;`;
+
+    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+  }
+
+  listOnu(params: IListONUParams, ctag = Date.now().toString()) {
+    const targetIdAcceptParams = [
+      'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID',
+    ];
+    const targetIdentifier = processParams(targetIdAcceptParams, params);
+    const sentence = `LST-ONU::${targetIdentifier}:${ctag}::;`;
 
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
