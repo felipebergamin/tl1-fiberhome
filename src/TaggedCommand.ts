@@ -27,7 +27,8 @@ export class TaggedCommand {
       takeWhile(result => result),
       reduce((acc, currentValue) => {
         debug('Reducing response');
-        currentValue.values.unshift(acc.values);
+        currentValue.result.values.unshift(...acc.result.values);
+        currentValue.block_records += acc.block_records;
         return currentValue;
       }),
       timeout(this.responseTimeout),
