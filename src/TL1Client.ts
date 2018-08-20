@@ -74,7 +74,7 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
-  public addOnu(params: IAddOnuParams, ctag = Date.now().toString()) {
+  addOnu(params: IAddOnuParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       "OLTID", "PONID",
     ];
@@ -105,7 +105,7 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
-  public configureLanPortVlan(params: IConfigureLanPort, ctag = Date.now().toString()) {
+  configureLanPortVlan(params: IConfigureLanPort, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       "ONUIP", "OLTID", "PONID", "ONUIDTYPE", "ONUID", "ONUPORT",
     ];
