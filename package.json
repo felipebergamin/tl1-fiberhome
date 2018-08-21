@@ -1,6 +1,6 @@
 {
   "name": "@felipebergamin/tl1-fiberhome",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "fiberhome tl1",
   "main": "./dist/app.js",
   "types": "./dist/app.d.ts",
