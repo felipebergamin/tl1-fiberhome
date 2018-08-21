@@ -77,7 +77,7 @@ export default class DataStream {
    * @param socketConfs host and port to connect
    * @param timeout timeout config (in ms)
    */
-  connect(socketConfs: { host: string, port: number }) {
+  connect(socketConfs: { host: string, port: number, connectTimeout?: number }) {
     debug(`DataStream:Connecting socket %s`, JSON.stringify(socketConfs));
     this.state = CONNECTION.CONNECTING;
 
@@ -86,8 +86,15 @@ export default class DataStream {
         throw new Error(`Invalid IP address ${socketConfs.host}`);
       }
 
+      const timeout = setTimeout(() => {
+        this.socket.destroy();
+        reject(new Error('Connection timeout'));
+        debug('Socket timeout after %d ms', socketConfs.connectTimeout);
+      }, socketConfs.connectTimeout || 6000);
+
       try {
         this.socket.connect(socketConfs, (...connectionArgs) => {
+          clearTimeout(timeout);
           debug('Socket connected %s', JSON.stringify(connectionArgs));
 
           this.rawData$ = fromEvent(this.socket, 'data');
