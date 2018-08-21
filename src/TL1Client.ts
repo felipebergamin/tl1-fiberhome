@@ -40,7 +40,7 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag.toString()).read;
   }
 
-  getOpticalModuleInformation(params, ctag = Date.now()) {
+  getOpticalModuleInformation(params: TL1.IListOpticalModuleDDMParams, ctag = Date.now()) {
     const targetIdAcceptParams = [
       "ONUIP", "OLTID", "PONID", "ONUIDTYPE", "ONUID", "PORTID", "PEERFLAG",
     ];
