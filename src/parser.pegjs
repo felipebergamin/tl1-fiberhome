@@ -6,6 +6,21 @@
     }
     return groups;
   }
+
+  function normalizeValues(values, attribs) {
+    let groups = [], i;
+    for (i = 0; i < values.length; i += attribs.length) {
+      const group = values.slice(i, i + attribs.length);
+      const obj = {};
+
+      for (let y = 0; y < attribs.length; y++) {
+        obj[attribs[y]] = group[y];
+      }
+
+      groups.push(obj);
+    }
+    return groups;
+  }
 }
 
 start = commandResponse
@@ -63,7 +78,7 @@ result
   [@]+ crlf
   attribs:attribs crlf
   values:values
-  [@]+ crlf { return { title: title.join(""), attribs, values: splitArray(values, attribs.length)} }
+  [@]+ crlf { return { title: title.join(""), attribs, values: normalizeValues(values, attribs)} }
 
 attribs
   = (tab attrib:[a-zA-Z ]+ { return attrib.join(""); } )*
