@@ -8,6 +8,8 @@ import debug from './debug';
 import * as parser from './parser';
 import { IResult } from './interfaces/IResult';
 
+const TEN_MINUTES = 10 * 60 * 1000;
+
 const parserDebug = Debug('node-tl1-fiberhome:parser');
 
 /** handles socket operations */
@@ -32,6 +34,8 @@ export default class DataStream {
     this.rawData$ = new Observable();
     this.data$ = new Subject();
 
+    this.socket.setTimeout(TEN_MINUTES);
+
     this.socket.on('end', () => {
       debug('DataStream Socket End');
       this.endObservables();
@@ -42,6 +46,11 @@ export default class DataStream {
       debug('DataStream Socket Error');
       this.data$.error(err);
     });
+
+    this.socket.on('timeout', () => {
+      debug('Warning: Socket timeout after 10 minutes inactive');
+      this.closeSocket();
+    });
   }
 
   get data(): Subject<IResult<any>> {
@@ -50,6 +59,17 @@ export default class DataStream {
 
   get rawData(): Observable<Buffer> {
     return this.state === CONNECTION.CONNECTED ? this.rawData$ : null;
+  }
+
+  get socketState() {
+    return this.state;
+  }
+
+  /**
+   * return true if socket is connected
+   */
+  canWrite(): boolean {
+    return this.state === CONNECTION.CONNECTED;
   }
 
   /**
@@ -144,6 +164,7 @@ export default class DataStream {
   closeSocket(err?) {
     debug('Closing socket');
     this.endObservables();
+    this.state = CONNECTION.CLOSED;
     err ? this.socket.destroy(err) : this.socket.end();
   }
 
