@@ -28,19 +28,19 @@ export class TL1Client {
     return this.dataStream.connect({ host: this.server, port: this.port });
   }
 
-  login(login: string, pwd: string, ctag = Date.now()) {
+  login(login: string, pwd: string, ctag = Date.now().toString()) {
     const sentence = `LOGIN:::${ctag}::UN=${login},PWD=${pwd};`;
 
     return this.runTaggedCommand(sentence, this.dataStream, ctag.toString()).read;
   }
 
-  logout(ctag = Date.now()) {
+  logout(ctag = Date.now().toString()) {
     const sentence = `LOGOUT:::${ctag}::;`;
 
     return this.runTaggedCommand(sentence, this.dataStream, ctag.toString()).read;
   }
 
-  getOpticalModuleInformation(params: TL1.IListOpticalModuleDDMParams, ctag = Date.now()) {
+  getOpticalModuleInformation(params: TL1.IListOpticalModuleDDMParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       "ONUIP", "OLTID", "PONID", "ONUIDTYPE", "ONUID", "PORTID", "PEERFLAG",
     ];
@@ -50,7 +50,7 @@ export class TL1Client {
     return this.runTaggedCommand<TL1.IListOMDDMResponse>(sentence, this.dataStream, ctag.toString()).read;
   }
 
-  handshake(ctag = Date.now()) {
+  handshake(ctag = Date.now().toString()) {
     const sentence = `SHAKEHAND:::${ctag}::;`;
 
     return this.runTaggedCommand(sentence, this.dataStream, ctag.toString()).read;
