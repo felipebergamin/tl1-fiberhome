@@ -1,37 +1,30 @@
 {
-  "name": "node-tl1-fiberhome",
-  "version": "1.0.1",
-  "description": "integration module for fiberhome TL1 communication interface",
-  "main": "./dist/app.js",
-  "types": "./dist/app.d.ts",
+  "name": "@felipebergamin/tl1-fiberhome",
+  "version": "1.0.0",
+  "description": "fiberhome tl1",
+  "main": "dist/app.js",
   "scripts": {
-    "prepare": "./node_modules/.bin/pegjs src/parser.pegjs",
-    "build": "rm -rf ./dist && tslint --project . && tsc",
-    "postbuild": "./node_modules/.bin/pegjs -o dist/parser.js src/parser.pegjs",
-    "prepublishOnly": "rm -rf ./dist && tslint --project . && tsc"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felipebergamin/node-tl1-fiberhome.git"
+    "url": "git+ssh://git@bitbucket.org/felipebergamin/node-tl1-fiberhome.git"
   },
   "keywords": [
-    "node",
     "tl1",
-    "fiberhome"
+    "fiberhome",
+    "anm2000"
   ],
   "author": "Felipe Bergamin <felipebergamin6@gmail.com>",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/felipebergamin/node-tl1-fiberhome/issues"
-  },
-  "homepage": "https://github.com/felipebergamin/node-tl1-fiberhome#readme",
-  "devDependencies": {
-    "@types/node": "^8.5.2",
-    "pegjs": "^0.10.0"
-  },
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/felipebergamin/node-tl1-fiberhome#readme",
   "dependencies": {
-    "@types/debug": "0.0.30",
     "debug": "^3.1.0",
     "rxjs": "^6.2.2"
+  },
+  "devDependencies": {
+    "@types/debug": "0.0.30",
+    "@types/node": "^10.7.1",
+    "pegjs": "^0.10.0"
   }
 }
