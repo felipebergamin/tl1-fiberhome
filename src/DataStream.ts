@@ -6,6 +6,7 @@ import * as Debug from 'debug';
 import { CONNECTION } from './constants';
 import debug from './debug';
 import * as parser from './parser';
+import { IResult } from './interfaces/IResult';
 
 const parserDebug = Debug('node-tl1-fiberhome:parser');
 
@@ -19,7 +20,7 @@ export default class DataStream {
   private state = CONNECTION.CLOSED;
 
   /** emit parsed data */
-  private data$: Subject<any>;
+  private data$: Subject<IResult<any>>;
 
   /** emit raw data (Buffer) received on Socket */
   private rawData$: Observable<Buffer>;
@@ -43,7 +44,7 @@ export default class DataStream {
     });
   }
 
-  get data(): Subject<any> {
+  get data(): Subject<IResult<any>> {
     return this.state === CONNECTION.CONNECTED ? this.data$ : null;
   }
 

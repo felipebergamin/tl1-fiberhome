@@ -3,9 +3,10 @@ import { filter, takeWhile, concatMap, reduce, timeout } from 'rxjs/operators';
 
 import DataStream from './DataStream';
 import debug from './debug';
+import { IResult } from './interfaces/IResult';
 
-export class TaggedCommand {
-  private data$ = new ReplaySubject(1);
+export class TaggedCommand<T = null> {
+  private data$ = new ReplaySubject<IResult<T>>(1);
 
   /**
    *
@@ -24,7 +25,7 @@ export class TaggedCommand {
     this.dataStream.data.pipe(
       filter(result => typeof result === typeof {} && result.ctag === this.ctag.toString()),
       concatMap(result => result.terminator === ';' ? of(result, null) : of(result)),
-      takeWhile(result => result),
+      takeWhile(result => !!result),
       reduce((acc, currentValue) => {
         debug('Reducing response');
         currentValue.result.values.unshift(...acc.result.values);

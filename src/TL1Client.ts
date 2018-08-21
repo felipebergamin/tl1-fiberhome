@@ -2,21 +2,7 @@ import debug from './debug';
 import DataStream from './DataStream';
 import { TaggedCommand } from './TaggedCommand';
 import { processParams } from './utils';
-import { IListUnregOnuParams } from './interfaces/IListUnregOnuParams';
-import { IAddOnuParams } from './interfaces/IAddOnuParams';
-import { IConfigureLanPort } from './interfaces/IConfigureLanPort';
-import { IConfigureLanPortBW } from './interfaces/IConfigureLanPortBW';
-import { IDelLanPortVlan } from './interfaces/IDelLanPortVlan';
-import { IDelOnuParams } from './interfaces/IDelOnuParams';
-import { IConfigureWanParams } from './interfaces/IConfigureWanParams';
-import { IQueryOnuState } from './interfaces/IQueryOnuState';
-import { IOnuPingParams } from './interfaces/IOnuPingParams';
-import { IQueryNeInformationParams } from './interfaces/IQueryNeInformationParams';
-import { IQueryCardInformationParams } from './interfaces/IQueryCardInformationParams';
-import { IQueryPonInfoParams } from './interfaces/IQueryPonInfoParams';
-import { IResetOnuParams } from './interfaces/IResetOnuParams';
-import { IListONUParams } from './interfaces/IListONUParams';
-import { IListOnuLanInfoParams } from './interfaces/IListOnuLanInfoParams';
+import * as TL1 from './interfaces';
 
 export class TL1Client {
   /** socket */
@@ -30,6 +16,10 @@ export class TL1Client {
   constructor(private server: string, private port: number = 3337, private timeout = 5000) {
     debug('TL1Client.new', server, port);
     this.dataStream = new DataStream();
+  }
+
+  get rawData() {
+    return this.dataStream.rawData;
   }
 
   connect() {
@@ -57,7 +47,7 @@ export class TL1Client {
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-OMDDM::${targetIdentifier}:${ctag}::;`;
 
-    return this.runTaggedCommand(sentence, this.dataStream, ctag.toString()).read;
+    return this.runTaggedCommand<TL1.IListOMDDMResponse>(sentence, this.dataStream, ctag.toString()).read;
   }
 
   handshake(ctag = Date.now()) {
@@ -66,15 +56,15 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag.toString()).read;
   }
 
-  listUnregisteredONUs(params: IListUnregOnuParams, ctag = Date.now().toString()) {
+  listUnregisteredONUs(params: TL1.IListUnregOnuParams, ctag = Date.now().toString()) {
     const acceptParams = ['OLTID', 'PONID'];
     const targetIdentifier = processParams(acceptParams, params);
     const sentence = `LST-UNREGONU::${targetIdentifier}:${ctag}::;`;
 
-    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+    return this.runTaggedCommand<TL1.ILstUnregOnuResponse>(sentence, this.dataStream, ctag).read;
   }
 
-  addOnu(params: IAddOnuParams, ctag = Date.now().toString()) {
+  addOnu(params: TL1.IAddOnuParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       "OLTID", "PONID",
     ];
@@ -92,7 +82,7 @@ export class TL1Client {
   /**
    * delete an authorized ONU from system
    */
-  deleteOnu(params: IDelOnuParams, ctag = Date.now().toString()) {
+  deleteOnu(params: TL1.IDelOnuParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       'OLTID', 'PONID',
     ];
@@ -105,7 +95,7 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
-  configureLanPortVlan(params: IConfigureLanPort, ctag = Date.now().toString()) {
+  configureLanPortVlan(params: TL1.IConfigureLanPort, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       "ONUIP", "OLTID", "PONID", "ONUIDTYPE", "ONUID", "ONUPORT",
     ];
@@ -120,7 +110,7 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
-  delLanPortVlan(params: IDelLanPortVlan, ctag = Date.now().toString()) {
+  delLanPortVlan(params: TL1.IDelLanPortVlan, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID', 'ONUPORT',
     ];
@@ -130,7 +120,7 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
-  configureONUBandwidth(params: IConfigureLanPortBW, ctag = Date.now().toString()) {
+  configureONUBandwidth(params: TL1.IConfigureLanPortBW, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       "ONUIP", "OLTID", "PONID", "ONUIDTYPE", "ONUID", "ONUPORT",
     ];
@@ -145,7 +135,7 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
-  configureWanConnection(params: IConfigureWanParams, ctag = Date.now().toString()) {
+  configureWanConnection(params: TL1.IConfigureWanParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       "ONUIP", "OLTID", "PONID", "ONUIDTYPE", "ONUID",
     ];
@@ -161,16 +151,16 @@ export class TL1Client {
     return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
   }
 
-  queryOnuState(params: IQueryOnuState, ctag = Date.now().toString()) {
+  queryOnuState(params: TL1.IQueryOnuState, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID',
     ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-ONUSTATE::${targetIdentifier}:${ctag}::;`;
-    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+    return this.runTaggedCommand<TL1.IQueryOnuStateResponse>(sentence, this.dataStream, ctag).read;
   }
 
-  ping(params: IOnuPingParams, ctag = Date.now().toString()) {
+  ping(params: TL1.IOnuPingParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID',
     ];
@@ -180,39 +170,39 @@ export class TL1Client {
     const datablocks = processParams(datablocksAcceptParams, params);
     const sentence = `PING::${targetIdentifier}:${ctag}::${datablocks};`;
 
-    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+    return this.runTaggedCommand<TL1.IOnuPingResponse>(sentence, this.dataStream, ctag).read;
   }
 
-  queryNEInformation(params: IQueryNeInformationParams, ctag = Date.now().toString()) {
+  queryNEInformation(params: TL1.IQueryNeInformationParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID',
     ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-DEVINFO::${targetIdentifier}:${ctag}::;`;
 
-    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+    return this.runTaggedCommand<TL1.IQueryNeInformationResponse>(sentence, this.dataStream, ctag).read;
   }
 
-  queryCardInformation(params: IQueryCardInformationParams, ctag = Date.now().toString()) {
+  queryCardInformation(params: TL1.IQueryCardInformationParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID', 'BOARDID',
     ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-BRDINFO::${targetIdentifier}:${ctag}::;`;
-    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+    return this.runTaggedCommand<TL1.IQueryCardInformationResponse>(sentence, this.dataStream, ctag).read;
   }
 
-  queryPonInfo(params: IQueryPonInfoParams, ctag = Date.now().toString()) {
+  queryPonInfo(params: TL1.IQueryPonInfoParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       'OLTID', 'PONID',
     ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-PONINFO::${targetIdentifier}:${ctag}::;`;
 
-    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+    return this.runTaggedCommand<TL1.IQueryPonInfoResponse>(sentence, this.dataStream, ctag).read;
   }
 
-  resetOnu(params: IResetOnuParams, ctag = Date.now().toString()) {
+  resetOnu(params: TL1.IResetOnuParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID', 'PORTID',
     ];
@@ -229,35 +219,35 @@ export class TL1Client {
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-DEVICE::${targetIdentifier}:${ctag}::;`;
 
-    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+    return this.runTaggedCommand<TL1.IQueryOltInformationResponse>(sentence, this.dataStream, ctag).read;
   }
 
-  listOnu(params: IListONUParams, ctag = Date.now().toString()) {
+  listOnu(params: TL1.IListONUParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID',
     ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-ONU::${targetIdentifier}:${ctag}::;`;
 
-    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+    return this.runTaggedCommand<TL1.IListONUResponse>(sentence, this.dataStream, ctag).read;
   }
 
-  listOnuLanInfo(params: IListOnuLanInfoParams, ctag = Date.now().toString()) {
+  listOnuLanInfo(params: TL1.IListOnuLanInfoParams, ctag = Date.now().toString()) {
     const targetIdAcceptParams = [
       'ONUIP', 'OLTID', 'PONID', 'ONUIDTYPE', 'ONUID', 'ONUPORT',
     ];
     const targetIdentifier = processParams(targetIdAcceptParams, params);
     const sentence = `LST-ONULANINFO::${targetIdentifier}:${ctag}::;`;
 
-    return this.runTaggedCommand(sentence, this.dataStream, ctag).read;
+    return this.runTaggedCommand<TL1.IListOnuLanInfoResponse>(sentence, this.dataStream, ctag).read;
   }
 
   disconnect() {
     this.dataStream.closeSocket();
   }
 
-  private runTaggedCommand(tl1Command: string, dataStream: DataStream, ctag: string): TaggedCommand {
-    const exec = new TaggedCommand(dataStream, ctag, this.timeout);
+  private runTaggedCommand<T>(tl1Command: string, dataStream: DataStream, ctag: string): TaggedCommand<T> {
+    const exec = new TaggedCommand<T>(dataStream, ctag, this.timeout);
     exec.write(tl1Command);
 
     return exec;
