@@ -2,9 +2,13 @@
   "name": "@felipebergamin/tl1-fiberhome",
   "version": "1.0.0",
   "description": "fiberhome tl1",
-  "main": "dist/app.js",
+  "main": "./dist/app.js",
+  "types": "./dist/app.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare": "./node_modules/.bin/pegjs src/parser.pegjs",
+    "build": "rm -rf ./dist && tslint --project . && tsc",
+    "postbuild": "./node_modules/.bin/pegjs -o dist/parser.js src/parser.pegjs",
+    "prepublishOnly": "rm -rf ./dist && tslint --project . && tsc"
   },
   "repository": {
     "type": "git",
