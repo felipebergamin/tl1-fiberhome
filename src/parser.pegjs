@@ -84,7 +84,7 @@ attribs
   = (tab attrib:[a-zA-Z ]+ { return attrib.join(""); } )*
 
 values
-  = (tab v:[_:a-zA-Z0-9-.\[\] ]+ crlf { return v.join("") } )*
+  = (tab v:[_,:a-zA-Z0-9-.\[\] ]+ crlf { return v.join("") } )*
 
 tab
   = [\t]*
