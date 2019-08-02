@@ -39,3 +39,6 @@ jspm_packages
 test.js
 test.ts
 src
+tsconfig.json
+tslint.json
+*.tgz
